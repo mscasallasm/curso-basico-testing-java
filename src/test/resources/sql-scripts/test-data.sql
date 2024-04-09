@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS movies(
 );
 
 INSERT INTO movies (name, minutes, genre, director) VALUES
-    ('Dark Knight', 152, 'ACTION', 'director1'),
+    ('Dark Knight', 152, 'COMEDY', 'director1'),
     ('Memento', 113, 'THRILLER', 'director2'),
     ('Matrix', 136, 'ACTION', 'director3'),
     ('Maria', 114, 'ACTION', 'director2'),

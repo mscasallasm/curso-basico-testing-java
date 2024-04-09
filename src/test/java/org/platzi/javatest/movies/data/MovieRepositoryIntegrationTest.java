@@ -39,7 +39,7 @@ public class MovieRepositoryIntegrationTest {
         Collection<Movie> movies = movieRepository.findAll();
 
         assertEquals(Arrays.asList(
-                new Movie(1,"Dark Knight", 152, Genre.ACTION, "director1"),
+                new Movie(1,"Dark Knight", 152, Genre.COMEDY, "director1"),
                 new Movie(2,"Memento", 113, Genre.THRILLER, "director2"),
                 new Movie(3,"Matrix", 136, Genre.ACTION, "director3"),
                 new Movie(4,"Maria", 114, Genre.ACTION, "director2"),
@@ -79,7 +79,6 @@ public class MovieRepositoryIntegrationTest {
 
     @Test
     public void insert_a_movie() {
-
         Movie movie = new Movie("Super 8", 112, Genre.THRILLER, "director4");
 
         movieRepository.saveOrUpdate(movie);
@@ -89,6 +88,40 @@ public class MovieRepositoryIntegrationTest {
         assertEquals( movieFromDb, new Movie(6,"Super 8", 112, Genre.THRILLER, "director4") );
     }
 
+    @Test
+    public void load_movie_by_minutes_and_genre() {
+        Collection<Movie> movies = movieRepository.findMoviesByTemplate(new Movie(null, 152, Genre.ACTION, null));
+
+        assertEquals( Arrays.asList(
+                new Movie(1,"Dark Knight", 152, Genre.COMEDY, "director1"),
+                new Movie(3,"Matrix", 136, Genre.ACTION, "director3"),
+                new Movie(4,"Maria", 114, Genre.ACTION, "director2"),
+                new Movie(5,"Macarena", 125, Genre.ACTION, "director1")
+        ), movies);
+    }
+
+    @Test
+    public void load_movie_by_name_and_minutes() {
+        Collection<Movie> movies = movieRepository.findMoviesByTemplate(new Movie("Maria", 125, null, null));
+
+        assertEquals( Arrays.asList(
+                new Movie(4,"Maria", 114, Genre.ACTION, "director2"),
+                new Movie(5,"Macarena", 125, Genre.ACTION, "director1")
+        ), movies);
+
+    }
+
+    @Test
+    public void load_movie_by_name_genre_and_minutes() {
+        Collection<Movie> movies = movieRepository.findMoviesByTemplate(new Movie("Maria", 125, Genre.COMEDY, null));
+
+        assertEquals( Arrays.asList(
+                new Movie(1,"Dark Knight", 152, Genre.COMEDY, "director1"),
+                new Movie(4,"Maria", 114, Genre.ACTION, "director2"),
+                new Movie(5,"Macarena", 125, Genre.ACTION, "director1")
+        ), movies);
+
+    }
     @After
     public void tearDown() throws Exception {
 

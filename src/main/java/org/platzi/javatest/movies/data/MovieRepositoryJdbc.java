@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.RowMapper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MovieRepositoryJdbc implements MovieRepository {
 
@@ -35,7 +36,19 @@ public class MovieRepositoryJdbc implements MovieRepository {
         jdbcTemplate.update("INSERT INTO movies (name, minutes, genre, director) values (?,?,?,?)", movie.getName(), movie.getMinutes(), movie.getGenre().toString(), movie.getDirector());
     }
 
+    @Override
+    public Collection<Movie> findMoviesByTemplate(Movie template) {
+        List<Movie> movies = jdbcTemplate.query("SELECT * FROM movies", movieMapper);
 
+        return movies.stream()
+                .filter(movie -> {
+                    return movie.getName().equalsIgnoreCase(template.getName()) ||
+                            movie.getMinutes().equals(template.getMinutes()) ||
+                            movie.getGenre().equals(template.getGenre()) ||
+                            movie.getDirector().equals(template.getDirector());
+                })
+                .collect(Collectors.toList());
+    }
 
 
 
@@ -48,13 +61,6 @@ public class MovieRepositoryJdbc implements MovieRepository {
     );
 
     public Collection<Movie> findByName(String name) {
-        //        Usando Like de mysql, el inconveniente es que la db esta configurada con el collate ci y tiene en cuenta que sea mayuscula
-        //        String likePattern = "%" + name + "%";
-        //
-        //        Object[] args = new String[]{(likePattern)};
-        //
-        //        return jdbcTemplate.query("SELECT * FROM movies WHERE name LIKE ?", new Object[]{likePattern}, movieMapper);
-
         List<Movie> resultado = new ArrayList<>();
 
         List<Movie> movies = jdbcTemplate.query("SELECT * FROM movies", movieMapper);
@@ -66,7 +72,6 @@ public class MovieRepositoryJdbc implements MovieRepository {
         }
 
         return resultado;
-
     }
 
     public Collection<Movie> findByDirector(String director) {
